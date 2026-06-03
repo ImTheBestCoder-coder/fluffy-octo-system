@@ -17,21 +17,22 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: 18
+          # Enabling caching speeds up future builds
+          cache: 'npm'
 
-      - name: Install webOS CLI Tools
-        # 'sudo' is required for global npm installs on ubuntu-latest
-        run: sudo npm install -g @lgwebos/cli
+      - name: Install Modern webOS CLI Tools
+        # Replaced @lgwebos/cli with the official unified tools package
+        run: npm install -g @webos-tools/cli
 
       - name: Package the App into IPK
-        # Explicitly call the absolute path of the global binary
-        run: /usr/local/bin/ares-package .
+        # Running via npx ensures the environment locates the 'ares' binary cleanly
+        run: npx ares-package .
 
       - name: Create Automated Download Link
         uses: softprops/action-gh-release@v2
         with:
           tag_name: v${{ github.run_number }}
           name: StarsOS Browser Build ${{ github.run_number }}
-          # Using a direct wildcard expression to target your file safely
           files: './*.ipk'
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
