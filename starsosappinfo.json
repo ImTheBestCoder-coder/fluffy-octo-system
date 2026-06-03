@@ -1,0 +1,11 @@
+{
+    "id": "com.custom.iframebrowser",
+    "version": "1.0.0",
+    "vendor": "Homebrew",
+    "type": "web",
+    "main": "StarsOsLauncher.html",
+    "title": "My TV Browser",
+    "icon": "icon.png",
+    "largeIcon": "largeIcon.png",
+    "requiredPermissions": ["internet"]
+}
