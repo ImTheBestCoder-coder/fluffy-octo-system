@@ -5,6 +5,7 @@ on:
       - main
 permissions:
   contents: write
+  id-token: write # Required for secure GitHub Actions release verification
 
 jobs:
   build:
@@ -17,22 +18,41 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: 18
-          # Speeds up runs by restoring your node_modules automatically
           cache: 'npm'
 
-      - name: Install Project Dependencies
-        # Installs packages listed in package.json (including webos-tools)
-        run: npm ci
+      - name: Install Dependencies
+        run: |
+          npm ci
+          # Fallback check if package.json doesn't have it explicitly as devDependency
+          if ! npx ares-package -V &>/dev/null; then
+            npm install -g @webos-tools/cli
+          fi
+
+      - name: Build Web App
+        # Add your compilation step here if you are using React/Svelte/Vite
+        # e.g., run: npm run build
+        run: echo "Skipping if pure HTML/JS app"
 
       - name: Package the App into IPK
-        # Safely calls the locally installed ares binary 
-        run: npx ares-package .
+        # Safely package the directory that holds your appinfo.json
+        run: |
+          if [ -d "dist" ]; then
+            npx ares-package dist
+          else
+            npx ares-package .
+          fi
+
+      - name: Verify IPK File Generation
+        # This debug step guarantees the file exists before attempting to release
+        run: |
+          ls -la *.ipk || (echo "ERROR: No .ipk file was generated! Check your appinfo.json location." && exit 1)
 
       - name: Create Automated Download Link
         uses: softprops/action-gh-release@v2
         with:
           tag_name: v${{ github.run_number }}
           name: StarsOS Browser Build ${{ github.run_number }}
-          files: './*.ipk'
+          files: |
+            *.ipk
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
