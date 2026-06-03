@@ -2,29 +2,24 @@ name: Build webOS IPK
 on:
   push:
     branches:
-      - main  # This means the robot runs every time you save changes to your main branch
+      - main
 permissions:
   contents: write
 
 jobs:
   build:
     runs-on: ubuntu-latest
-
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
-
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-with: 18
-
+          node-version: 18
       - name: Install webOS CLI Tools
         run: npm install -g @lgwebos/cli
-
       - name: Package the App into IPK
         run: ares-package .
-
       - name: Create Automated Download Link
         uses: softprops/action-gh-release@v2
         with:
