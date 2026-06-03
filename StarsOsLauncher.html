@@ -1,24 +1,38 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>My Page</title>
+    <title>My Simple TV Browser</title>
     <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 0;
-            padding: 20px;
-            background-color: #f4f4f4;
-        }
-        h1 {
-            color: #333;
-        }
+        body, html { margin: 0; padding: 0; width: 100%; height: 100%; background: #222; font-family: sans-serif; overflow: hidden; }
+        #navbar { display: flex; background: #333; padding: 10px; gap: 10px; align-items: center; height: 60px; box-sizing: border-box; }
+        #url-bar { flex-grow: 1; padding: 10px; font-size: 16px; border-radius: 4px; border: none; background: #fff; color: #000; }
+        .btn { padding: 10px 20px; background: #00bcd4; border: none; color: white; border-radius: 4px; cursor: pointer; font-weight: bold; font-size: 16px; }
+        #browser-frame { width: 100%; height: calc(100% - 60px); border: none; background: white; }
     </style>
 </head>
 <body>
-    <h1>Welcome to My Page</h1>
-    <p>This is a simple HTML page.</p>
-    <p>You can add more content here.</p>
+
+    <div id="navbar">
+        <input type="text" id="url-bar" value="https://bing.com" onkeydown="if(event.key === 'Enter') loadURL()">
+        <button class="btn" onclick="loadURL()">Go</button>
+    </div>
+
+    <!-- The iframe that loads the websites -->
+    <iframe id="browser-frame" src="https://bing.com"></iframe>
+
+    <script>
+        const iframe = document.getElementById('browser-frame');
+        const urlBar = document.getElementById('url-bar');
+
+        function loadURL() {
+            let url = urlBar.value.trim();
+            // Automatically add https:// if missing
+            if (!url.startsWith('http://') && !url.startsWith('https://')) {
+                url = 'https://' + url;
+            }
+            urlBar.value = url;
+            iframe.src = url;
+        }
+    </script>
 </body>
 </html>
