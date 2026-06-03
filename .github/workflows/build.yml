@@ -4,6 +4,8 @@ on:
   push:
     branches:
       - main  # This means the robot runs every time you save changes to your main branch
+permissions:
+  contents: write
 
 jobs:
   build:
