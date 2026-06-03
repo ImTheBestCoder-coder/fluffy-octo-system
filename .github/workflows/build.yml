@@ -17,15 +17,15 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: 18
-          # Enabling caching speeds up future builds
+          # Speeds up runs by restoring your node_modules automatically
           cache: 'npm'
 
-      - name: Install Modern webOS CLI Tools
-        # Replaced @lgwebos/cli with the official unified tools package
-        run: npm install -g @webos-tools/cli
+      - name: Install Project Dependencies
+        # Installs packages listed in package.json (including webos-tools)
+        run: npm ci
 
       - name: Package the App into IPK
-        # Running via npx ensures the environment locates the 'ares' binary cleanly
+        # Safely calls the locally installed ares binary 
         run: npx ares-package .
 
       - name: Create Automated Download Link
