@@ -12,19 +12,26 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
+
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: 18
+
       - name: Install webOS CLI Tools
-        run: npm install -g @lgwebos/cli
+        # 'sudo' is required for global npm installs on ubuntu-latest
+        run: sudo npm install -g @lgwebos/cli
+
       - name: Package the App into IPK
-        run: ares-package .
+        # Explicitly call the absolute path of the global binary
+        run: /usr/local/bin/ares-package .
+
       - name: Create Automated Download Link
         uses: softprops/action-gh-release@v2
         with:
           tag_name: v${{ github.run_number }}
           name: StarsOS Browser Build ${{ github.run_number }}
-          files: "*.ipk"
+          # Using a direct wildcard expression to target your file safely
+          files: './*.ipk'
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
